@@ -1,0 +1,111 @@
+-- СКРИПТ ПЕРЕСОЗДАНИЯ БАЗЫ
+DROP TABLE IF EXISTS orders;
+DROP TABLE IF EXISTS orders_statuses;
+DROP TABLE IF EXISTS user_courses;
+DROP TABLE IF EXISTS courses;
+DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS sub_statuses;
+DROP TABLE IF EXISTS statuses;
+DROP TABLE IF EXISTS user_agreement_statuses;
+
+-- СТАТУСЫ
+
+CREATE TABLE sub_statuses(
+  sub_status_id INT PRIMARY KEY,
+  sub_status_name VARCHAR(20) NOT NULL
+);
+CREATE TABLE orders_statuses(
+  order_status_id INT PRIMARY KEY,
+  order_status_name VARCHAR(20) NOT NULL
+);
+
+CREATE TABLE statuses(
+  status_id INT PRIMARY KEY,
+  status_name VARCHAR(20) NOT NULL
+);
+
+CREATE TABLE user_agreement_statuses(
+  user_agreement_status_id INT PRIMARY KEY,
+  user_agreement_status_ds TEXT NOT NULL
+);
+
+-- ПОЛЬЗОВАТЕЛИ
+CREATE TABLE users (
+  user_id SERIAL PRIMARY KEY,
+  user_telegram_id INT UNIQUE NOT NULL,
+  user_name VARCHAR(30),
+  created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+  last_active TIMESTAMP WITH TIME ZONE,
+  sub_status_id INT NOT NULL DEFAULT 0,
+  user_agreement_status_id INT NOT NULL DEFAULT 0,
+
+  FOREIGN KEY (sub_status_id) REFERENCES sub_statuses(sub_status_id),
+  FOREIGN KEY (user_agreement_status_id) REFERENCES user_agreement_statuses(user_agreement_status_id)
+);
+
+-- БЛОКИ
+CREATE TABLE courses (
+  course_id INT PRIMARY KEY,
+  course_name VARCHAR(30) UNIQUE NOT NULL,
+  file_path VARCHAR(60)
+);
+
+-- МНОГИЕ КО МНОГИМ БЛОКИ ПОЛЬЗОВАТЕЛИ
+CREATE TABLE user_courses (
+  id SERIAL PRIMARY KEY,
+  user_id INT NOT NULL,
+  course_id INT NOT NULL,
+  status_id INT NOT NULL DEFAULT 0,
+
+  FOREIGN KEY (user_id) REFERENCES users(user_id),
+  FOREIGN KEY (course_id) REFERENCES courses(course_id),
+  FOREIGN KEY (status_id) REFERENCES statuses(status_id)
+);
+-- ЗАКАЗЫ
+CREATE TABLE orders (
+  order_id VARCHAR(100) PRIMARY KEY,              -- Совпадает с payload
+  user_id INT NOT NULL,
+  sub_status_id INT NOT NULL,
+  amount BIGINT NOT NULL,
+  currency VARCHAR(10) NOT NULL,
+  order_status_id INT NOT NULL DEFAULT 0,
+  provider_payment_id VARCHAR(100),
+  created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+  paid_at TIMESTAMP WITH TIME ZONE,
+
+  FOREIGN KEY (order_status_id) REFERENCES orders_statuses(order_status_id),
+  FOREIGN KEY (user_id) REFERENCES users(user_id),
+  FOREIGN KEY (sub_status_id) REFERENCES sub_statuses(sub_status_id)
+);
+
+-- ИСХОДННЫЕ ДАННЫЕ
+
+INSERT INTO courses (course_id, course_name) VALUES
+(1, 'base'),
+(2, 'sound'),
+(3, 'estetic'),
+(4, 'dinamic'),
+(5, 'animation');
+
+INSERT INTO sub_statuses (sub_status_id, sub_status_name) VALUES
+(0, 'free'),
+(1, 'base'),
+(2, 'PRO');
+
+INSERT INTO orders_statuses(order_status_id, order_status_name) VALUES
+(0, 'pending'),
+(1, 'paid'),
+(2, 'cancelled'),
+(3, 'failed');
+
+INSERT INTO statuses (status_id, status_name) VALUES
+(0, 'lock'),
+(1, 'unlock');
+
+INSERT INTO user_agreement_statuses(user_agreement_status_id, user_agreement_status_ds) VALUES
+(0, 'Данный статус означает, что пользователь не дал свое согласие на обработку персональных данных и не подтвердил ознакомление с пользовательским соглашением,
+ а значит, не имеет права пользоваться услугами бота @schukina_mentor_bot. Правообладетель бота не несет ответственность за дальнешие действия пользователя.'),
+ (1, 'Данный статус означает, что пользователь соглашается с политикой обработки персональных данных, а также, что он ознакомлен с пользовательским соглашением, а значит, имеет право пользоваться
+ услугами бота @schukina_mentor_bot, в соответствии с условиями подписки.')
+
+
