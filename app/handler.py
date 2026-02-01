@@ -36,7 +36,7 @@ async def start_handler(message: types.Message, bot: Bot, state: FSMContext, db)
     tg_id = message.from_user.id
     if await Db_functions.check_user(db, tg_id):
         # Кружочек от Маши
-        await bot.send_video_note(tg_id, video_note='DQACAgIAAxkBAAIMfWkS07Cus8r_vJlLu2Rb0pS9Z1srAAKqdgACH_6ZSGEAAQ1LR1NadzYE')
+        await bot.send_video_note(tg_id, video_note=media.get("hello_vm"), protect_content=True)
         # Приветственное слово текстом
         await bot.send_message(tg_id, await m.get_first_hello(), parse_mode=ParseMode.MARKDOWN_V2,protect_content=True)  # Отправляем сообщение в MarkDown моде
         # Сообщение о программе курса(Смотри, какую программу я для тебя составила)
@@ -414,7 +414,7 @@ async def i_looked_handler(message: types.Message, bot: Bot, state: FSMContext, 
 
     await bot.send_message(tg_id, text=message_2, protect_content=True, reply_markup=kb.block1_first_video_in_chat)
 
-    await bot.send_video_note(tg_id, video_note='DQACAgIAAxkBAAIMVmkS0XGIg1w8EjcbEqOxDoClz3m_AAKcdgACH_6ZSOByaicfU-l6NgQ', protect_content=True)
+    await bot.send_video_note(tg_id, video_note=block1_media.get("chat_link_vm"), protect_content=True)
 
     await state.set_state(FBS.wait_first_chat_video)
 
@@ -899,7 +899,7 @@ async def block4_6_handler(message: types.Message, bot: Bot, state: FSMContext, 
     async with action_sender:
         await bot.send_photo(tg_id, photo=stickers[4], protect_content=True)
 
-    await bot.send_video_note(tg_id, video_note="DQACAgIAAxkBAAIS5GklbzWlnoLRmR1EDcBZEqF2mV0ZAALhiQACTgMpSfL2u1k2Urm4NgQ", protect_content=True,
+    await bot.send_video_note(tg_id, video_note=block4_media.get("materials")[-1], protect_content=True,
                               reply_markup=kb.bl4_6_kb)
 
     await Db_functions.update_user_course_status(db=db, user_telegram_id=tg_id, course_id=5)
@@ -1146,7 +1146,7 @@ async def process_pay(message: types.Message, bot: Bot, state: FSMContext, db):
 
 @router.message()
 async def error_message(message: types.Message, bot: Bot):
-    file_id = message.document.file_id
+    file_id = message.video_note.file_id
     print(file_id)
 
 #@router.message()

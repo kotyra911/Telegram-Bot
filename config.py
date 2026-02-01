@@ -46,12 +46,14 @@ stickers = [
 
 media = {
     "program":os.getenv("PROGRAM"),
+    "hello_vm":os.getenv("HELLO_VC"),
 }
 
 block1_media = {
     "lesson1":os.getenv("LESSON"),
     "materials":os.getenv("MATERIAL1BL1"),
-    "materials2":os.getenv("MATERIAL2BL1")
+    "materials2":os.getenv("MATERIAL2BL1"),
+    "chat_link_vm":os.getenv("CHAT_LINK_VM"),
 }
 
 block2_media = {
@@ -78,7 +80,7 @@ block4_media = {
     "materials":[os.getenv("WHITE4"),os.getenv("ACTOR"),
                  os.getenv("COPY"),os.getenv("CUT"),
                  os.getenv("SOUND"),os.getenv("PINK_DR"),
-                 os.getenv("BLUE_DR")]
+                 os.getenv("BLUE_DR"), os.getenv("VM_BEFORE5")]
 }
 
 block5_media = {
