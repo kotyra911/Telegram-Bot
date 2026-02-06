@@ -2,6 +2,8 @@ from aiogram.client import bot
 from typing_extensions import reveal_type
 
 from app.keyboards import sub_button_inline_keyboard_base, sub_button_inline_keyboard_free, support_from_menu
+from config import pro_chapter
+
 
 class BotMessages():
     @staticmethod
@@ -1069,6 +1071,15 @@ class BotMessages():
             "будешь публиковать частичку закулисья или свои успехи с курса, я обязательно все посмотрю 🥰"
         )
         return message
+
+    @staticmethod
+    async def get_bonus_pack_message():
+        message = (
+            "А вот и твой бонусный пак для монтажа 👇\n\n"
+            f"{pro_chapter.get('ydisk')}"
+        )
+        return message
+
 
     @staticmethod
     async def bl5_10_message():

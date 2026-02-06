@@ -16,7 +16,7 @@ from aiogram import Bot
 import app.keyboards as kb
 from config import (DialogStates as DS, MenuStates as MS, TabsStates as TB, FirstBlockStates as FBS,
                     SecondBlockStates as SBS,BaseInvoiceConfig, ThirdBlockStates as TBS, FourthBlockStates as F4BS,
-                    FifthBlockStates as F5BS, YOOTOKEN, PRO_CALL_BACK_DATA, ProInvoiceConfig)
+                    FifthBlockStates as F5BS, YOOTOKEN, PRO_CALL_BACK_DATA, ProInvoiceConfig, pro_chapter)
 
 from aiogram.types import FSInputFile, CallbackQuery, PreCheckoutQuery
 from db.interaction import DataBaseInteraction as Db_functions
@@ -136,12 +136,23 @@ async def pro_chapter_handler(message: types.Message, bot: Bot, state: FSMContex
                                    parse_mode=ParseMode.MARKDOWN_V2, reply_markup=kb.pro_chapter_1,protect_content=True)
         await state.set_state(MS.pro_chapter)
 
-        await Db_functions.update_last_active(db, tg_id)  # Обновление статуса last_active
-
     else:  # Если у пользователя любой другой тариф, ему выдается следующая клавиатура
         await bot.send_message(tg_id, await m.get_pro_table_message_0(), parse_mode=ParseMode.MARKDOWN_V2,
                                    reply_markup=kb.pro_chapter_0,protect_content=True)
         await state.set_state(MS.pro_chapter)
+
+
+@router.message(StateFilter(MS.pro_chapter), F.text == 'Бонусный пак')
+async def bonus_pack_handler(message: types.Message, bot: Bot):
+
+    await bot.send_message(message.from_user.id, await m.get_bonus_pack_message(), protect_content=True)
+
+
+@router.message(StateFilter(MS.pro_chapter), F.text == "Чек лист с идеями")
+async def ideas_list_handler(message: types.Message, bot: Bot, state: FSMContext, db):
+
+    await bot.send_document(message.from_user.id, document=pro_chapter.get('ideas'),
+                            caption="Вот твой чек лист с идеями 👆", protect_content=True)
 
 
 @router.message(StateFilter(MS.main_menu), F.text=='Мои уроки')

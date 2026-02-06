@@ -44,6 +44,11 @@ stickers = [
     os.getenv("STICKER5"),
 ]
 
+pro_chapter = {
+    "ydisk":os.getenv("YANDEX_DISK"),
+    "ideas":os.getenv("IDEA_FOR_VIDEO")
+}
+
 media = {
     "program":os.getenv("PROGRAM"),
     "hello_vm":os.getenv("HELLO_VC"),
