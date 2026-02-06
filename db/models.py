@@ -5,13 +5,13 @@ from sqlalchemy.dialects.postgresql.base import UUID
 from db.db_connection import Base
 from sqlalchemy import (Column, String,
                         Integer, ForeignKey,
-                        TIMESTAMP, func, BigInteger, DateTime)
+                        TIMESTAMP, func, BigInteger, DateTime, BigInteger)
 
 
 class User(Base):
     __tablename__ = 'users'
     user_id = Column(Integer, primary_key=True)
-    user_telegram_id = Column(Integer, unique=True)
+    user_telegram_id = Column(BigInteger, unique=True)
 
     user_name = Column(String(30))
 
