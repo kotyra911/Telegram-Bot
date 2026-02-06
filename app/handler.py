@@ -1146,7 +1146,7 @@ async def process_pay(message: types.Message, bot: Bot, state: FSMContext, db):
 
 @router.message()
 async def error_message(message: types.Message, bot: Bot):
-    file_id = message.video_note.file_id
+    file_id = message.document.file_id
     print(file_id)
 
 #@router.message()
