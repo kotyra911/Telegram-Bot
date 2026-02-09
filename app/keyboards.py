@@ -400,7 +400,7 @@ profile = ReplyKeyboardMarkup(
 pro_chapter_1 = ReplyKeyboardMarkup(
     keyboard=[
         [KeyboardButton(text='Бонусный пак'), KeyboardButton(text='Чек лист с идеями')],
-        [KeyboardButton(text='Назад')]
+        [KeyboardButton(text='Назад'), KeyboardButton(text='Отправить финальное дз')]
     ],
     resize_keyboard=True, input_field_placeholder='Вам доступные бонусы...'
 )

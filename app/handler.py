@@ -142,6 +142,12 @@ async def pro_chapter_handler(message: types.Message, bot: Bot, state: FSMContex
         await state.set_state(MS.pro_chapter)
 
 
+@router.message(StateFilter(MS.pro_chapter), F.text=='Отправить финальное дз')
+async def pro_chapter_dz_handler(message: types.Message, bot: Bot, state: FSMContext, db):
+    await bot.send_message(message.from_user.id, text=await m.get_info_about_send_dz(),
+                           parse_mode=ParseMode.HTML, protect_content=True)
+
+
 @router.message(StateFilter(MS.pro_chapter), F.text == 'Бонусный пак')
 async def bonus_pack_handler(message: types.Message, bot: Bot):
 
@@ -1014,7 +1020,7 @@ async def block_5_5_handler(message: types.Message, bot: Bot, state: FSMContext,
 
     await bot.send_message(tg_id, await m.bl5_8_message(name), protect_content=True)
 
-    await bot.send_message(tg_id, text='МАТВЕЙ!!! НЕ ЗАБУДЬ!!! ЗДЕСЬ ДОЛЖНА БЫТЬ ИНФА О ТОМ, КАК ОТПРАВИТЬ ФИНАЛЬНОЕ ДОМАШНЕЕ ЗАДАНИЕ!!!', protect_content=True)
+    await bot.send_message(tg_id, text='Если у тебя тариф PRO, то ты можешь отправить финальное дз на проверку мне! Для этого перейди во вкладку PRO', protect_content=True)
 
     await bot.send_message(tg_id, await m.bl5_9_message(), protect_content=True, reply_markup=kb.bl5_5_kb)
 
