@@ -73,7 +73,7 @@ class BotMessages():
         support_info_message = (
             "Возникла проблема в работе бота или с прохождением уроков? "
             "Напишите нам — мы постараемся помочь как можно быстрее:"
-            "👉 @Here_will_be_support_username"
+            "👉 @cap_cut_support"
         )
         return support_info_message
 

@@ -1154,17 +1154,17 @@ async def process_pay(message: types.Message, bot: Bot, state: FSMContext, db):
 
 
 
-#@router.message()
-#async def error_message(message: types.Message, bot: Bot):
-  #  await bot.send_message(message.from_user.id, text='Я не знаю такую команду. Воспользуйтесь /menu, чтобы перейти в главное меню.\n\n'
-                     #                                'Используйте /commands, чтобы увидеть все команды, которые вы можете использовать\n\n'
-                      #                               'Если ошибка повторится, пожалуйста, обратитесь в нашу поддержку:\n'
-                          #                           '👉 @Here_will_be_support_username',protect_content=True)
-
 @router.message()
 async def error_message(message: types.Message, bot: Bot):
-    file_id = message.document.file_id
-    print(file_id)
+    await bot.send_message(message.from_user.id, text='Я не знаю такую команду. Воспользуйтесь /menu, чтобы перейти в главное меню.\n\n'
+                                                     'Используйте /commands, чтобы увидеть все команды, которые вы можете использовать\n\n'
+                                                     'Если ошибка повторится, пожалуйста, обратитесь в нашу поддержку:\n'
+                                                     '👉 @cap_cut_support',protect_content=True)
+
+#@router.message()
+#async def error_message(message: types.Message, bot: Bot):
+  #  file_id = message.document.file_id
+ #   print(file_id)
 
 #@router.message()
 #async def error_message(message: types.Message, bot: Bot):
