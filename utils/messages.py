@@ -62,9 +62,9 @@ class BotMessages():
     @staticmethod
     async def get_confirm_license() -> str:
         confirm_license_message = (
-            "Для начала тебе нужно ознакомится с политикой "
-            "обработки персональных данных и принять "
-            "политику конфиденциальности."
+            "Для начала тебе нужно ознакомится и согласиться с <a href='https://kotyra911.github.io/Documents/docs/publichnaya-oferta.html'>публичной офертой</a>, "
+            "c <a href='https://kotyra911.github.io/Documents/docs/publichnaya-oferta.html'>пользовательским соглашением</a>, а также дать <a href='https://kotyra911.github.io/Documents/docs/soglasie-na-obrabotky-personalnich-dannich.html'>согласие на обработку персональных данных</a>"
+            "\n\nВсе документы к ознакомлению доступны <a href='https://kotyra911.github.io/Documents/'>здесь</a>."
         )
         return confirm_license_message
 

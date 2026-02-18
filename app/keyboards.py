@@ -359,7 +359,7 @@ register1 = ReplyKeyboardMarkup(
 # Клавиатура для ознакомления с пользовательским соглашением
 confirm_and_register1 = ReplyKeyboardMarkup(
     keyboard=[
-        [KeyboardButton(text='Продолжить позже'), KeyboardButton(text='Ознакомился/-ась✅')],
+        [KeyboardButton(text='Продолжить позже'), KeyboardButton(text='Согласен(на)')],
         [KeyboardButton(text='Поддержка')]],
         resize_keyboard=True, input_field_placeholder='Ознакомьтесь с пользовательским соглашением')
 # Клавиатура, которая выдается после сообщения с информацией о службе поддержки

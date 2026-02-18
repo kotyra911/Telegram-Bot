@@ -44,7 +44,7 @@ async def start_handler(message: types.Message, bot: Bot, state: FSMContext, db)
         # Карточка с программой курса
         await bot.send_photo(tg_id, photo=media.get("program") ,protect_content=True)
         # Просьба ознакомится с пользовательским соглашением
-        await bot.send_message(tg_id, await m.get_confirm_license(), reply_markup=kb.confirm_and_register1,protect_content=True)
+        await bot.send_message(tg_id, await m.get_confirm_license(), reply_markup=kb.confirm_and_register1,protect_content=True, parse_mode=ParseMode.HTML)
         # Назначения состояния, для последующего ответа на сообщение
         await state.set_state(DS.waiting_confirm_user_agreement)
 
@@ -245,7 +245,7 @@ async def step_back(message: types.Message, bot: Bot, state: FSMContext, db):
     await state.set_state(new_state)
 
 # Обработчик на согласие пользователя на обработку персональных данных и т.д.
-@router.message(F.text == 'Ознакомился/-ась✅', StateFilter(DS.waiting_confirm_user_agreement))
+@router.message(F.text == 'Согласен(на)', StateFilter(DS.waiting_confirm_user_agreement))
 async def confirm_agreement_handler(message: types.Message, bot: Bot, state: FSMContext, db):
     tg_id = message.from_user.id
 
