@@ -3,6 +3,10 @@ import hashlib
 from fastapi import FastAPI, Request, HTTPException
 from config import PRODAMUS_KEY
 import hmac
+import logging
+
+
+logger = logging.getLogger(__name__)
 
 api_router = APIRouter()
 
@@ -53,5 +57,19 @@ async def webhook_handler(request: Request):
     print("Подпись совпадает")
 
     return {"status": "success"}
+
+
+
+
+@api_router.post("/debug")
+async def webhook_handler(request: Request):
+    body = await request.body()
+    headers = dict(request.headers)
+
+    logger.info(f"HEADERS: {headers}")
+    logger.info(f"RAW BODY: {body}")
+    logger.info(f"BODY AS TEXT: {body.decode('utf-8', errors='ignore')}")
+
+    return {"status": "debug"}
 
 
