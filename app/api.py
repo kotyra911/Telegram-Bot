@@ -15,24 +15,21 @@ async def root():
 
 
 async def verify_signature(
-    data: dict,
+    data: list[tuple[str, str]],
     secret_key: str,
     received_sign: str,
 ) -> bool:
 
-    # Сортируем параметры
-    sorted_items = sorted(data.items())
+    sorted_items = sorted(data, key=lambda x: x[0])
 
-    # Формируем строку
     sign_string = "".join(str(value) for _, value in sorted_items)
-    sign_string += secret_key
 
-    # Считаем sha256
-    calculated_sign = hashlib.sha256(
-        sign_string.encode("utf-8")
+    calculated_sign = hmac.new(
+        secret_key.encode("utf-8"),
+        sign_string.encode("utf-8"),
+        hashlib.sha256,
     ).hexdigest()
 
-    # Безопасное сравнение
     return hmac.compare_digest(calculated_sign, received_sign)
 
 
@@ -40,35 +37,35 @@ async def verify_signature(
 async def webhook_handler(request: Request):
     print("Поймал вебхук от Продамуса")
 
-    # Получаем данные формы
     form = await request.form()
-    data = dict(form)
+    data = list(form.multi_items())
 
-    # Получаем подпись из заголовка
     received_signature = request.headers.get("Sign")
 
     if not data:
+        print("ошибка 1")
         raise HTTPException(status_code=400, detail="POST body empty")
 
     if not received_signature:
+        print("ошибка 2")
         raise HTTPException(status_code=400, detail="Signature not found in headers")
 
-    # Проверяем подпись
-    is_valid = await verify_signature(data, SECRET_KEY, received_signature)
+    is_valid = verify_signature(data, SECRET_KEY, received_signature)
 
     if not is_valid:
+        print("ошибка 3")
         raise HTTPException(status_code=400, detail="Invalid signature")
 
     print("Подпись совпадает")
 
-    order_id = data.get("order_id")
+    data_dict = dict(data)
+
+    order_id = data_dict.get("order_id")
 
     if not order_id:
+        print("ошибка 4")
         raise HTTPException(status_code=400, detail="order_id missing")
 
-    # 👇 ТУТ должна быть async работа с БД
-
     return {"status": "success"}
-
 
 
