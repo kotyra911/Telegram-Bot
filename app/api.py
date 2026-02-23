@@ -50,7 +50,7 @@ async def webhook_handler(request: Request):
         print("ошибка 2")
         raise HTTPException(status_code=400, detail="Signature not found in headers")
 
-    is_valid = verify_signature(data, SECRET_KEY, received_signature)
+    is_valid = await verify_signature(data, SECRET_KEY, received_signature)
 
     if not is_valid:
         print("ошибка 3")
