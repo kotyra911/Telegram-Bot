@@ -1,9 +1,13 @@
+from typing import Optional
+
 from fastapi import APIRouter
-import hashlib
-from fastapi import FastAPI, Request, HTTPException
+from flet_core.icons import PRINT
+
 from config import PRODAMUS_KEY
-import hmac
 import logging
+from fastapi import FastAPI, Request, Header, HTTPException
+import hmac
+import hashlib
 
 
 logger = logging.getLogger(__name__)
@@ -18,45 +22,25 @@ async def root():
     return {"status": "OK"}
 
 
-async def verify_signature(
-    body: bytes,
-    secret_key: str,
-    received_sign: str,
-) -> bool:
-
-    calculated_sign = hmac.new(
-        secret_key.encode("utf-8"),
-        body,
-        hashlib.sha256,
-    ).hexdigest()
-
-    return hmac.compare_digest(calculated_sign, received_sign)
-
-
 @api_router.post("/success-payment-webhook")
-async def webhook_handler(request: Request):
-    print("Поймал вебхук от Продамуса")
+async def webhook_handler(request: Request, sign: Optional[str] = Header(None)):
+        body = await request.body()
 
-    body = await request.body()
-    received_signature = request.headers.get("Sign")
+        print(body)
 
-    if not body:
-        print("Нет тела запроса")
-        raise HTTPException(status_code=400, detail="POST body empty")
 
-    if not received_signature:
-        print("Не найдена подпись в заголовке")
-        raise HTTPException(status_code=400, detail="Signature not found in headers")
+        # Проверяем подпись
+        signature = hmac.new(SECRET_KEY.encode(), body, hashlib.sha256).hexdigest()
 
-    is_valid = await verify_signature(body, SECRET_KEY, received_signature)
+        print(signature)
+        print(sign)
 
-    if not is_valid:
-        print("Подпись НЕ совпадает")
-        raise HTTPException(status_code=400, detail="Invalid signature")
+        if signature != sign:
+            raise HTTPException(status_code=400, detail="Invalid signature")
 
-    print("Подпись совпадает")
-
-    return {"status": "success"}
+        data = await request.json()
+        print("Получены данные:", data)
+        return {"status": "ok"}
 
 
 
@@ -71,5 +55,7 @@ async def webhook_handler(request: Request):
     logger.info(f"BODY AS TEXT: {body.decode('utf-8', errors='ignore')}")
 
     return {"status": "debug"}
+
+
 
 
