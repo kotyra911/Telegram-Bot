@@ -1,9 +1,12 @@
+import hmac
 import os
 import uuid
 from uuid import UUID
 from aiogram.fsm.state import StatesGroup, State
 from dotenv import load_dotenv
 import logging
+import hashlib
+from urllib.parse import urlencode
 
 
 lg = logging.getLogger()  # Создание логгера
@@ -209,4 +212,37 @@ class ProInvoiceConfig:
             "label": "Руб",
             "amount": amount
         }]
+
+class InvoiceLinkConfigDemo:
+    def __init__(self, product_name: str, price: int, user_telegram_id: int,):
+
+        self.link_form = "https://demo.payform.ru/"
+        self.data = {
+            "order_id":str(uuid.uuid4()),
+            "products":{
+                "name":product_name,
+                "price":price,
+                "quantity":1,
+
+            },
+            "demo_mode":1,
+            "customer_extra":user_telegram_id,
+            "do":"pay",
+            "urlNotification":"here_will_be_link",
+        }
+
+        self.sorted_data = urlencode(self.data).encode()
+
+        self.signature = hmac.new(
+            PRODAMUS_KEY.encode(),
+            self.sorted_data,
+            hashlib.sha256
+        ).hexdigest()
+
+        self.data["signature"] = self.signature
+
+        self.link = f"{self.link_form}?{urlencode(self.data)}"
+
+
+
 

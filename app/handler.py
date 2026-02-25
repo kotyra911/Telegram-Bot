@@ -16,7 +16,7 @@ from aiogram import Bot
 import app.keyboards as kb
 from config import (DialogStates as DS, MenuStates as MS, TabsStates as TB, FirstBlockStates as FBS,
                     SecondBlockStates as SBS,BaseInvoiceConfig, ThirdBlockStates as TBS, FourthBlockStates as F4BS,
-                    FifthBlockStates as F5BS, YOOTOKEN, PRO_CALL_BACK_DATA, ProInvoiceConfig, pro_chapter)
+                    FifthBlockStates as F5BS, YOOTOKEN, PRO_CALL_BACK_DATA, ProInvoiceConfig, pro_chapter,InvoiceLinkConfigDemo)
 
 from aiogram.types import FSInputFile, CallbackQuery, PreCheckoutQuery
 from db.interaction import DataBaseInteraction as Db_functions
@@ -81,6 +81,7 @@ async def handler_name_answer(message: types.Message, bot: Bot, state: FSMContex
 
     else: # Если все проверки пройдены, происходит регистрация пользователя и отправка ответа
         await Db_functions.add_user(db, tg_id, user_name)
+
         await Db_functions.switch_user_agreement(db, tg_id)  # Изменение статуса о пользовательском соглашении
         # Ответ на получение имени
         await bot.send_message(tg_id, await m.get_message_after_confirm_agreement(user_name),
@@ -1096,7 +1097,9 @@ async def subscription(call: CallbackQuery, bot: Bot, db):
 async def subscription(call: CallbackQuery, bot: Bot, db):
 
     tg_id = call.from_user.id
+
     user_id = await Db_functions.get_user_id_by_tg(db, tg_id)
+
     # Формирование данных платежа
     order_id = str(uuid.uuid4())
     np = BaseInvoiceConfig(chat_id=tg_id, payload=order_id, start_parameter=order_id)
