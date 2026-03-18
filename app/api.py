@@ -1,4 +1,4 @@
-from typing import Optional, Any
+"""from typing import Optional, Any
 import json
 from fastapi import APIRouter
 from config import PRODAMUS_KEY
@@ -87,6 +87,6 @@ async def webhook_handler(request: Request):
 
     return {"status": "debug"}
 
-
+"""
 
 

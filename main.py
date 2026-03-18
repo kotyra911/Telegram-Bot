@@ -6,15 +6,9 @@ from aiogram import Bot, Dispatcher
 import config
 from app.handler import router as bot_router
 from middlewares.db_middleware import DBSessionMiddleware
-from app.api import api_router
 
 
-app = FastAPI()
-
-app.include_router(api_router)
-
-
-async def start_fastapi():
+"""async def start_fastapi():
     server = uvicorn.Server(
         uvicorn.Config(
             app=app,
@@ -41,7 +35,21 @@ async def main():
     await asyncio.gather(
         start_fastapi(),
         start_bot(),
-    )
+    )"""
+
+async def start_bot():
+    bot = Bot(token=config.TOKEN)
+    dp = Dispatcher()
+
+    dp.include_router(bot_router)
+    dp.update.middleware(DBSessionMiddleware())
+
+    await bot.get_updates(offset=-1)
+    await dp.start_polling(bot)
+
+
+async def main():
+    await start_bot()
 
 
 if __name__ == "__main__":

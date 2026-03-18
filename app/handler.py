@@ -1,6 +1,6 @@
 import os
 import uuid
-
+import json
 from aiogram.filters import CommandStart, Command, StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.utils.chat_action import ChatActionSender
@@ -1068,6 +1068,20 @@ async def subscription(call: CallbackQuery, bot: Bot, db):
 
         np = ProInvoiceConfig(chat_id=tg_id, payload=order_id, start_parameter=order_id, amount=300000)
 
+        provider_data = {
+            "receipt": {
+                "items": [{
+                    "description": "PRO Курс по монтажу в программе CapCut",
+                    "quantity": "1.00",
+                    "amount": {
+                        "value": "3000.00",
+                        "currency": "RUB"
+                    },
+                    "vat_code": 1
+                }]
+            }
+        }
+
 
     else:
 
@@ -1077,11 +1091,25 @@ async def subscription(call: CallbackQuery, bot: Bot, db):
 
         np = ProInvoiceConfig(chat_id=tg_id, payload=order_id, start_parameter=order_id, amount=800000)
 
+        provider_data = {
+            "receipt": {
+                "items": [{
+                    "description": "PRO Курс по монтажу в программе CapCut",
+                    "quantity": "1.00",
+                    "amount": {
+                        "value": "8000.00",
+                        "currency": "RUB"
+                    },
+                    "vat_code": 1
+                }]
+            }
+        }
+
 
     # Отправка счета
     await bot.send_invoice(chat_id=np.chat_id, title=np.title, description=np.description, payload=np.payload,
                                provider_token=np.provider_token, currency=np.currency,
-                               start_parameter=np.start_parameter, prices=np.prices)
+                               start_parameter=np.start_parameter, prices=np.prices,need_email=True, send_email_to_provider=True,provider_data=json.dumps(provider_data))
 
     # Удаление предыдущего сообщения, чтобы красиво смотрелось
     await bot.delete_message(call.from_user.id, call.message.message_id)
@@ -1103,10 +1131,26 @@ async def subscription(call: CallbackQuery, bot: Bot, db):
     # Формирование данных платежа
     order_id = str(uuid.uuid4())
     np = BaseInvoiceConfig(chat_id=tg_id, payload=order_id, start_parameter=order_id)
+
+    provider_data = {
+    "receipt": {
+        "items": [{
+            "description": "Базовый курс по монтажу в программе CapCut",
+            "quantity": "1.00",
+            "amount": {
+                "value": "5000.00",
+                "currency": "RUB"
+            },
+            "vat_code": 1
+        }]
+    }
+}
+
     # Отправка счета
     await bot.send_invoice(chat_id=np.chat_id, title=np.title, description=np.description, payload=np.payload,
                            provider_token=np.provider_token, currency=np.currency,
-                           start_parameter=np.start_parameter, prices=np.prices)
+                           start_parameter=np.start_parameter, prices=np.prices,
+                           need_email=True, send_email_to_provider=True,provider_data=json.dumps(provider_data))
 
     await bot.delete_message(call.from_user.id, call.message.message_id)
 
