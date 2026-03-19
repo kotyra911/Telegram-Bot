@@ -1100,7 +1100,9 @@ async def subscription(call: CallbackQuery, bot: Bot, db):
                         "value": "8000.00",
                         "currency": "RUB"
                     },
-                    "vat_code": 1
+                    "vat_code": 1,
+                    "payment_mode": "full_payment",
+                    "payment_subject": "commodity"
                 }]
             }
         }
