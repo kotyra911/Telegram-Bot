@@ -233,20 +233,31 @@ async def change_name_request(message: types.Message, bot: Bot, state: FSMContex
 async def change_email(message: types.Message, bot: Bot, state: FSMContext, db):
     tg_id = message.from_user.id
 
-    await bot.send_message(tg_id, text='Напиши мне пожалуйста свою новую имя ↓',protect_content=True)
+    await bot.send_message(tg_id, text='Напиши мне пожалуйста свою новую почту ↓',protect_content=True)
     await state.set_state(TB.change_email)
     await Db_functions.update_last_active(db, tg_id)  # Обновление статуса last_active
 
 @router.message(StateFilter(TB.change_email))
 async def get_new_email(message: types.Message, bot: Bot, state: FSMContext, db):
-    tg_id = message.from_user.id
+    if message.text == "Назад":
+        sub_status = await Db_functions.get_user_sub_status(db, message.from_user.id)
+        current_state = await state.get_state()  # Получение текущего состояния
+        new_state, new_keyboard = await step_back_check(current_state,
+                                                        sub_status)  # Получение клавиатуры и нового состояния
 
-    await Db_functions.update_user_email(db, tg_id, message.text)
+        await bot.send_message(message.from_user.id, text='Вы вернулись назад', reply_markup=new_keyboard,
+                               protect_content=True)
 
-    await bot.send_message(tg_id, text=f'Вы успешно сменили почту!\n\n'
-                                       f'Добавленная почта: {message.text}', reply_markup=kb.main_menu)
+    else:
 
-    await state.set_state(MS.main_menu)
+        tg_id = message.from_user.id
+
+        await Db_functions.update_user_email(db, tg_id, message.text)
+
+        await bot.send_message(tg_id, text=f'Вы успешно сменили почту!\n\n'
+                                           f'Добавленная почта: {message.text}', reply_markup=kb.main_menu)
+
+        await state.set_state(MS.main_menu)
 
 
 # Обработчик, который ловит новое имя из "Изменить имя"
