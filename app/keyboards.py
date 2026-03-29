@@ -391,8 +391,8 @@ main_menu_pro = ReplyKeyboardMarkup(
 # Клавиатура при переходе во вкладку ПРОФИЛЬ
 profile = ReplyKeyboardMarkup(
     keyboard=[
-        [KeyboardButton(text='Изменить имя'), KeyboardButton(text='Мой тариф')],
-        [KeyboardButton(text='Назад')]
+        [KeyboardButton(text='Изменить имя'), KeyboardButton(text='Изменить почту')],
+        [KeyboardButton(text='Назад'), KeyboardButton(text='Мой тариф')]
     ],
     resize_keyboard=True, input_field_placeholder='Ваш профиль...'
 )
