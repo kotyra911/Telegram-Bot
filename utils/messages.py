@@ -134,11 +134,12 @@ class BotMessages():
         return user_a_exist_no_agreement_message
 
     @staticmethod
-    async def get_profile_message(user_name, sub_status):
+    async def get_profile_message(user_name, sub_status, user_email):
         sub_status = sub_status.upper()
         profile_message = (
             f"Твоё имя:  {user_name.capitalize()}\n"
             f"Ваш тариф:  {sub_status}\n"
+            f"Почта для чеков:  {user_email.capitalize()}\n"
         )
         return profile_message
 

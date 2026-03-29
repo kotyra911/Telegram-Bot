@@ -126,6 +126,14 @@ async def help_handler(message: types.Message, bot: Bot):
     tg_id = message.from_user.id
     await bot.send_message(tg_id, await m.get_support_info(),protect_content=True)
 
+@router.message(Command('commands'))
+async def commands_handler(message: types.Message, bot: Bot):
+    tg_id = message.from_user.id
+    await bot.send_message(tg_id, text='Доступные команды:\n\n'
+                                       '/help -- Если возникли проблемы в работе бота\n'
+                                       '/menu -- Возвращает вас в главное меню\n'
+                                       '/command -- Показывает все доступные команды', protect_content=True)
+
 # Обработчик для вкладки PRO
 @router.message(StateFilter(MS.main_menu), F.text =='PRO')
 async def pro_chapter_handler(message: types.Message, bot: Bot, state: FSMContext, db):
@@ -200,11 +208,13 @@ async def my_rate_handler(message: types.Message, bot: Bot, state: FSMContext, d
 async def my_profile_handler(message: types.Message, bot: Bot, state: FSMContext, db):
     tg_id = message.from_user.id  # Получение тг id
 
+    user_email = await Db_functions.get_user_email(db, message.from_user.id)
+
     user_name = await Db_functions.get_username_by_id(tg_id, db)  # Получение имени пользователя по tg id
 
     user_sub_status = await Db_functions.get_user_sub_status(db, tg_id)  # Получение информации о тарифе
 
-    await bot.send_message(tg_id, await m.get_profile_message(user_name, user_sub_status),
+    await bot.send_message(tg_id, await m.get_profile_message(user_name, user_sub_status, user_email),
                                reply_markup=kb.profile,protect_content=True)
     await state.set_state(MS.profile)
 
@@ -217,6 +227,26 @@ async def change_name_request(message: types.Message, bot: Bot, state: FSMContex
     await bot.send_message(tg_id, text='Напиши мне пожалуйста свое новое имя ↓',protect_content=True)
     await state.set_state(TB.change_name)
     await Db_functions.update_last_active(db, tg_id)  # Обновление статуса last_active
+
+
+@router.message(StateFilter(MS.profile), F.text == 'Изменить почту')
+async def change_email(message: types.Message, bot: Bot, state: FSMContext, db):
+    tg_id = message.from_user.id
+
+    await bot.send_message(tg_id, text='Напиши мне пожалуйста свою новую имя ↓',protect_content=True)
+    await state.set_state(TB.change_email)
+    await Db_functions.update_last_active(db, tg_id)  # Обновление статуса last_active
+
+@router.message(StateFilter(TB.change_email))
+async def get_new_email(message: types.Message, bot: Bot, state: FSMContext, db):
+    tg_id = message.from_user.id
+
+    await Db_functions.update_user_email(db, tg_id, message.text)
+
+    await bot.send_message(tg_id, text=f'Вы успешно сменили почту!\n\n'
+                                       f'Добавленная почта: {message.text}', reply_markup=kb.main_menu)
+
+    await state.set_state(MS.main_menu)
 
 
 # Обработчик, который ловит новое имя из "Изменить имя"
@@ -1042,14 +1072,23 @@ async def block_5_6_handler(message: types.Message, bot: Bot, state: FSMContext,
 async def update_rate(message: types.Message, bot: Bot, state: FSMContext, db):
     tg_id = message.from_user.id
 
-    sub_status_name = await Db_functions.get_user_sub_status(db, tg_id)
-    sub_status_name = sub_status_name.upper()
+    user_email = await Db_functions.get_user_email(db, tg_id)
 
-    message_to_user, keyboard = await m.get_rates_message(sub_status_name)
+    if user_email is None:
+        await bot.send_message(tg_id, text='Перед оплатой пожалуйста добавьте почту для отправки чека\n\nВы можете написать ее мне в ответном сообщении\n\n'
+                                           'Также в будущем вы всегда можете изменить эту почту перейдя в раздел <Профиль> в главном меню')
 
-    await bot.send_message(tg_id, message_to_user, reply_markup=keyboard, parse_mode=ParseMode.HTML,protect_content=True)
+        await state.set_state(TB.change_email)
 
-    await state.set_state(MS.update_rate)
+    else:
+        sub_status_name = await Db_functions.get_user_sub_status(db, tg_id)
+        sub_status_name = sub_status_name.upper()
+
+        message_to_user, keyboard = await m.get_rates_message(sub_status_name)
+
+        await bot.send_message(tg_id, message_to_user, reply_markup=keyboard, parse_mode=ParseMode.HTML,protect_content=True)
+
+        await state.set_state(MS.update_rate)
 
 # Колл бэк, который срабатывает на нажатие на клавиатуру с покупкой
 @router.callback_query(F.data==PRO_CALL_BACK_DATA)
@@ -1200,6 +1239,16 @@ async def process_pay(message: types.Message, bot: Bot, state: FSMContext, db):
                                reply_markup=kb.after_payment, parse_mode=ParseMode.HTML)
 
         await state.set_state(TB.after_payment)
+
+        user_email = Db_functions.get_user_email(db, tg_id)
+
+        await bot.send_message(727243111, text=f'НОВАЯ ПОКУПКА\n\n'
+                                               f'Тариф: {user_order_sub_status_id}\n\n'
+                                               f'1 -> Значит BASE'
+                                               f'2 -> Значит PRO')
+
+        await bot.send_message(727243111, text='Почта для чека:')
+        await bot.send_message(727243111, text=f'{user_email}')
 
     else:
         await bot.send_message(tg_id, text='Произошла ошибка при обработке платежа. Пожалуйста, обратитесь в поддержку', reply_markup=kb.main_menu, protect_content=True)

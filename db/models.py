@@ -13,6 +13,7 @@ class User(Base):
     user_id = Column(Integer, primary_key=True)
     user_telegram_id = Column(BigInteger, unique=True)
 
+    user_email = Column(String(100))
     user_name = Column(String(30))
 
     created_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=func.now())

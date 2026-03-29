@@ -123,6 +123,7 @@ class MenuStates(StatesGroup):
 class TabsStates(StatesGroup):
     change_name = State()
     after_payment = State()
+    change_email = State()
 
 class FirstBlockStates(StatesGroup):
     waiting_time_for_work = State()

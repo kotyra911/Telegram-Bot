@@ -1,6 +1,7 @@
 from datetime import datetime, timezone
 
 from sqlalchemy.ext.asyncio import AsyncSession
+from typing_extensions import reveal_type
 
 from db.db_connection import AsyncSessionLocal
 from sqlalchemy import insert, select, update, and_
@@ -124,6 +125,19 @@ class DataBaseInteraction:
             update(User)
             .where(User.user_telegram_id == user_telegram_id)
             .values(user_name=user_name)
+        )
+        try:
+            await db.execute(stmt)
+            await db.commit()
+        except Exception as e:
+            lg.error(e)
+
+    @staticmethod
+    async def update_user_email(db: AsyncSession, user_telegram_id: int, user_email: str) -> None:
+        stmt = (
+            update(User)
+            .where(User.user_telegram_id == user_telegram_id)
+            .values(user_email=user_email)
         )
         try:
             await db.execute(stmt)
@@ -271,6 +285,20 @@ class DataBaseInteraction:
 
         except Exception as e:
             lg.error(e)
+
+
+    @staticmethod
+    async def get_user_email(db: AsyncSession, user_telegram_id: int) -> str | None:
+        stmt = (
+            select(User.user_email)
+            .where(User.user_telegram_id == user_telegram_id)
+        )
+        try:
+            user_email = await db.scalar(stmt)
+            return user_email or None
+        except Exception as e:
+            lg.error(e)
+            return None
 
     # Функция для получения order_id по user_id
     @staticmethod

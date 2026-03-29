@@ -1,0 +1,9 @@
+`UPDATE users`  
+`SET sub_status_id = 1 →  (BASE) | 1 →  (PRO)`
+`WHERE user_id = user_telegram_id;`
+
+`UPDATE user_courses uc`  
+`JOIN users u ON u.user_id = uc.user_id`  
+`SET uc.status_id = 1`  
+`WHERE u.user_telegram_id = user_telegram_id`  
+`AND uc.course_id = 1;`

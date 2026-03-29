@@ -6,7 +6,7 @@ from app import keyboards
 from config import (MenuStates as Ms,
                     State, DialogStates as Ds, SecondBlockStates as SBS,
                     FirstBlockStates as FBS, ThirdBlockStates as TBS,
-                    FourthBlockStates as F4BS, FifthBlockStates as F5BS)
+                    FourthBlockStates as F4BS, FifthBlockStates as F5BS, TabsStates as TB)
 import app.keyboards
 
 async def step_back_check(state: str, sub_status: str) -> (
@@ -54,6 +54,12 @@ async def step_back_check(state: str, sub_status: str) -> (
 
     elif state == F5BS.state1.state:
         return Ms.my_lessons, keyboards.my_lessons
+
+    elif state == TB.change_email.state:
+        return Ms.profile, keyboards.profile
+
+    elif state == TB.change_name.state:
+        return Ms.profile, keyboards.profile
     else:
         return False
 
