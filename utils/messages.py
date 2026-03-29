@@ -139,7 +139,7 @@ class BotMessages():
         profile_message = (
             f"Твоё имя:  {user_name.capitalize()}\n"
             f"Ваш тариф:  {sub_status}\n"
-            f"Почта для чеков:  {user_email.capitalize()}\n"
+            f"Почта для чеков:  {user_email}\n"
         )
         return profile_message
 
