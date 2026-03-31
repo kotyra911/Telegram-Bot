@@ -1255,7 +1255,7 @@ async def process_pay(message: types.Message, bot: Bot, state: FSMContext, db):
 
         await bot.send_message(727243111, text=f'НОВАЯ ПОКУПКА\n\n'
                                                f'Тариф: {user_order_sub_status_id}\n\n'
-                                               f'1 -> Значит BASE'
+                                               f'1 -> Значит BASE\n'
                                                f'2 -> Значит PRO')
 
         await bot.send_message(727243111, text='Почта для чека:')
