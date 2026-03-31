@@ -1251,7 +1251,7 @@ async def process_pay(message: types.Message, bot: Bot, state: FSMContext, db):
 
         await state.set_state(TB.after_payment)
 
-        user_email = Db_functions.get_user_email(db, tg_id)
+        user_email = await Db_functions.get_user_email(db, tg_id)
 
         await bot.send_message(727243111, text=f'НОВАЯ ПОКУПКА\n\n'
                                                f'Тариф: {user_order_sub_status_id}\n\n'
