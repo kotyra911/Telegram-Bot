@@ -1,7 +1,3 @@
-Вот аккуратный перевод твоего README на английский, сохраняя смысл и структуру:
-
----
-
 # 🤖 Telegram Bot (Python)
 
 A modern Telegram bot written in Python, using an asynchronous framework and a reliable database.
@@ -22,7 +18,7 @@ Follow these steps to run the bot locally:
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/your-username/your-repo.git
+git clone https://github.com/klimanskiy1/capcut-friend.git
 cd your-repo
 ```
 
